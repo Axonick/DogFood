@@ -1,14 +1,15 @@
-import './styles.css'
-import LogoSrc from './logo.svg'
+import './index.css'
+import logoSrc from './logo.svg'
 
-function Logo() {
+function Logo({ className, href, ...props }) {
   return (
     <a
-      href="/"
-      className="logo"
+      href={href ? href : '#'}
+      className={className ? className : 'logo'}
+      {...props}
     >
       <img
-        src={LogoSrc}
+        src={logoSrc}
         alt="Логотип компании"
         className="logo__pic"
       />
