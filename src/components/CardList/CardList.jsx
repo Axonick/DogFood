@@ -1,13 +1,14 @@
-import './index.css'
 import Card from '../Card/Card'
+import './index.css'
 
-function CardList({ goods }) {
+function CardList({ goods, onProductLike }) {
   return (
     <div className="cards">
       {goods.map((item, index) => (
         <Card
-          key={index}
+          key={item._id}
           {...item}
+          onProductLike={onProductLike}
         />
       ))}
     </div>

@@ -4,7 +4,7 @@
   padding: 12px 0;
 }
 
-.header__wrapper {
+.wrapper {
   display: flex;
   align-items: center;
   justify-content: space-between;

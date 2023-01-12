@@ -1,10 +1,26 @@
-import './index.css'
+import style from './index.module.css'
+import cn from 'classnames'
 
-function Header({ children }) {
+function Header({ children, user, onUpdateUser }) {
+  const handleClickButtonEdit = (e) => {
+    e.preventDefault()
+    onUpdateUser({ name: 'Роман', about: 'Дилан' })
+  }
+
   return (
-    <header className="header">
+    <header className={cn(style.header, 'cover')}>
       <div className="container">
-        <div className="header__wrapper">{children}</div>
+        {user?.email && <span>{user?.email}</span>}
+        {user?.name && <span>{user?.name}</span>}
+
+        <button
+          className="btn"
+          onClick={handleClickButtonEdit}
+        >
+          Изменить
+        </button>
+
+        <div className={style.wrapper}>{children}</div>
       </div>
     </header>
   )

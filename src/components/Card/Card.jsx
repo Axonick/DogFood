@@ -1,17 +1,49 @@
+import cn from 'classnames'
+
 import './index.css'
 import like from './like.svg'
 
-function Card({ name, price, discount, wight, desciption, picture }) {
+function Card({
+  name,
+  price,
+  _id,
+  likes,
+  discount,
+  wight,
+  desciption,
+  pictures,
+  tags,
+  onProductLike,
+}) {
   const discount_price = Math.round(price - (price * discount) / 100)
+
+  
+
+  function handleLikeClick() {
+    onProductLike(_id, likes)
+  }
+
   return (
     <div className="card">
       <div className="card__sticky card__sticky_type_top-left">
         {discount !== 0 && (
           <span className="card__discount">{`-  ${discount}%`}</span>
         )}
+        {tags &&
+          tags.map((tag) => (
+            <span
+              key={tag}
+              className={cn('tag', { [`tag_type_${tag}`]: true })}
+            >
+              {tag}
+            </span>
+          ))}
       </div>
       <div className="card__sticky card__sticky_type_top-right">
-        <button className="card__favorite">
+        <button
+          className="card__favorite"
+          onClick={handleLikeClick}
+        >
           <img
             src={like}
             alt="Добавить в избранное"
@@ -25,7 +57,7 @@ function Card({ name, price, discount, wight, desciption, picture }) {
         className="card__link"
       >
         <img
-          src={picture}
+          src={pictures}
           alt={desciption}
           className="card__image"
         />
