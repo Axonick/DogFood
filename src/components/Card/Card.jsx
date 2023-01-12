@@ -1,7 +1,8 @@
 import cn from 'classnames'
+import { isLiked } from '../../utils/product'
 
 import './index.css'
-import like from './like.svg'
+import { ReactComponent as Like } from './like.svg'
 
 function Card({
   name,
@@ -14,13 +15,14 @@ function Card({
   pictures,
   tags,
   onProductLike,
+  currentUser,
 }) {
   const discount_price = Math.round(price - (price * discount) / 100)
 
-  
+  const liked = isLiked(likes, currentUser._id)
 
   function handleLikeClick() {
-    onProductLike(_id, likes)
+    onProductLike({ _id, likes })
   }
 
   return (
@@ -41,14 +43,12 @@ function Card({
       </div>
       <div className="card__sticky card__sticky_type_top-right">
         <button
-          className="card__favorite"
+          className={cn('card__favorite', {
+            'card__favorite_is-active': liked,
+          })}
           onClick={handleLikeClick}
         >
-          <img
-            src={like}
-            alt="Добавить в избранное"
-            className="card_favorite-icon"
-          />
+          <Like className="card_favorite-icon" />
         </button>
       </div>
 

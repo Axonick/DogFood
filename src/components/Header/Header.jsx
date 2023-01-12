@@ -4,7 +4,7 @@ import cn from 'classnames'
 function Header({ children, user, onUpdateUser }) {
   const handleClickButtonEdit = (e) => {
     e.preventDefault()
-    onUpdateUser({ name: 'Роман', about: 'Дилан' })
+    onUpdateUser({ name: 'Роман', about: 'about' })
   }
 
   return (

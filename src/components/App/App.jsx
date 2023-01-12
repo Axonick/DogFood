@@ -11,6 +11,7 @@ import api from '../../utils/api'
 import './index.css'
 import useDebounce from '../../hooks/useDebounce'
 import Button from '../Button/Button'
+import { isLiked } from '../../utils/product'
 
 function App() {
   const [cards, setCards] = useState([])
@@ -60,9 +61,8 @@ function App() {
   }
 
   function handleProductLike(product) {
-    const isLiked = product.likes?.some((id) => id === currentUser._id)
-    console.log(product, product.likes)
-    api.changeLikeProduct(product._id, isLiked).then((newCard) => {
+    const liked = isLiked(product.likes, currentUser._id)
+    api.changeLikeProduct(product._id, liked).then((newCard) => {
       const newProducts = cards.map((cardState) => {
         console.log('Карточка из стейта', cardState)
         console.log('Карточка из сервера', newCard)
@@ -99,6 +99,7 @@ function App() {
           <CardList
             goods={cards}
             onProductLike={handleProductLike}
+            currentUser={currentUser}
           />
         </div>
       </main>

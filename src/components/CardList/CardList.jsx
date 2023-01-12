@@ -1,7 +1,7 @@
 import Card from '../Card/Card'
 import './index.css'
 
-function CardList({ goods, onProductLike }) {
+function CardList({ goods, onProductLike, currentUser }) {
   return (
     <div className="cards">
       {goods.map((item, index) => (
@@ -9,6 +9,7 @@ function CardList({ goods, onProductLike }) {
           key={item._id}
           {...item}
           onProductLike={onProductLike}
+          currentUser={currentUser}
         />
       ))}
     </div>
@@ -16,3 +17,4 @@ function CardList({ goods, onProductLike }) {
 }
 
 export default CardList
+ 
