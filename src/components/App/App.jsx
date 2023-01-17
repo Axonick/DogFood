@@ -12,14 +12,17 @@ import './index.css'
 import useDebounce from '../../hooks/useDebounce'
 import Button from '../Button/Button'
 import { isLiked } from '../../utils/product'
+import Spinner from '../Spinner'
 
 function App() {
   const [cards, setCards] = useState([])
   const [searchQuery, setSearchQuery] = useState('')
   const [currentUser, setCurrentUser] = useState(null)
+  const [isLoading, setIsLoading] = useState(true)
   const debounceSearchQuery = useDebounce(searchQuery, 300)
 
   const handleRequest = () => {
+    setIsLoading(true)
     //const filterCards = cards.filter((item) =>
     //  item.name.toUpperCase().includes(searchQuery.toUpperCase())
     //)
@@ -30,15 +33,22 @@ function App() {
         setCards(searchResult)
       })
       .catch((err) => console.log(err))
+      .finally(() => {
+        setIsLoading(false)
+      })
   }
 
   useEffect(() => {
+    setIsLoading(true)
     Promise.all([api.getProductList(), api.getUserInfo()])
       .then(([productsData, userData]) => {
         setCurrentUser(userData)
         setCards(productsData.products)
       })
       .catch((err) => console.log(err))
+      .finally(() => {
+        setIsLoading(false)
+      })
   }, [])
 
   useEffect(() => {
@@ -64,8 +74,8 @@ function App() {
     const liked = isLiked(product.likes, currentUser._id)
     api.changeLikeProduct(product._id, liked).then((newCard) => {
       const newProducts = cards.map((cardState) => {
-        console.log('Карточка из стейта', cardState)
-        console.log('Карточка из сервера', newCard)
+        //console.log('Карточка из стейта', cardState)
+        //console.log('Карточка из сервера', newCard)
         return cardState._id === newCard._id ? newCard : cardState
       })
       setCards(newProducts)
@@ -96,11 +106,15 @@ function App() {
         />
         <Sort />
         <div className="content__cards">
-          <CardList
-            goods={cards}
-            onProductLike={handleProductLike}
-            currentUser={currentUser}
-          />
+          {isLoading ? (
+            <Spinner />
+          ) : (
+            <CardList
+              goods={cards}
+              onProductLike={handleProductLike}
+              currentUser={currentUser}
+            />
+          )}
         </div>
       </main>
       <Footer />

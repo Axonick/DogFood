@@ -1,7 +1,7 @@
-import './index.css'
+import style from './index.module.css'
 
 function Spinner() {
-  return null
+  return <div className={style.spinner}></div>
 }
 
 export default Spinner

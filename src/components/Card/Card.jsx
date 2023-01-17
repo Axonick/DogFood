@@ -1,5 +1,5 @@
 import cn from 'classnames'
-import { isLiked } from '../../utils/product'
+import { calcDiscountPrice, isLiked } from '../../utils/product'
 
 import './index.css'
 import { ReactComponent as Like } from './like.svg'
@@ -17,9 +17,9 @@ function Card({
   onProductLike,
   currentUser,
 }) {
-  const discount_price = Math.round(price - (price * discount) / 100)
+  const discount_price = calcDiscountPrice(price, discount)
 
-  const liked = isLiked(likes, currentUser._id)
+  const liked = isLiked(likes, currentUser?._id)
 
   function handleLikeClick() {
     onProductLike({ _id, likes })
