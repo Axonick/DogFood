@@ -5,4 +5,4 @@ import App from './components/App/App'
 import { ProductPage } from './pages/ProductPage/Product-Page'
 
 const root = ReactDOM.createRoot(document.getElementById('root'))
-root.render(<ProductPage />)
+root.render(<App />)

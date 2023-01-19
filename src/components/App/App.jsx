@@ -5,12 +5,10 @@ import Header from '../Header/Header'
 import Sort from '../Sort/Sort'
 import Logo from '../Logo/Logo'
 import Search from '../Search/Search'
-//import data from '../../assets/data.json'
 import SearchInfo from '../SearchInfo/SearchInfo'
 import api from '../../utils/api'
 import './index.css'
 import useDebounce from '../../hooks/useDebounce'
-import Button from '../Button/Button'
 import { isLiked } from '../../utils/product'
 import Spinner from '../Spinner'
 
@@ -94,7 +92,7 @@ function App() {
             href="/"
           />
           <Search
-            onSubmit={handleFormSubmit}
+            onSubmit={() => handleFormSubmit}
             onInput={handleInputChange}
           />
         </>

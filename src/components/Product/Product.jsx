@@ -18,6 +18,7 @@ const Product = ({
   description,
   _id,
   currentUser,
+  product,
 }) => {
   const discount_price = calcDiscountPrice(price, discount)
   const isLike = isLiked(likes, currentUser?._id)
@@ -69,7 +70,7 @@ const Product = ({
           </div>
           <button
             className={cn(style.favorite, { [style.favoriteActive]: isLike })}
-            onClick={onProductLike}
+            onClick={() => onProductLike(product)}
           >
             <Save />
             <span>{isLike ? 'В избранном' : 'В избранное'}</span>
