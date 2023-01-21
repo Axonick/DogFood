@@ -1,6 +1,10 @@
+import { useContext } from 'react'
+import { CardContext } from '../../context/cardContext'
 import './index.css'
 
-function SearchInfo({ searchText, searchCount }) {
+function SearchInfo({ searchText }) {
+  const { cards } = useContext(CardContext)
+  const searchCount = cards.length
   return (
     searchText && (
       <section className="search-title">

@@ -4,6 +4,9 @@ import { calcDiscountPrice, isLiked, createMarkup } from '../../utils/product'
 import { ReactComponent as Save } from './img/save.svg'
 import truck from './img/truck.svg'
 import quality from './img/quality.svg'
+import { useNavigate } from 'react-router-dom'
+import { useContext } from 'react'
+import { UserContext } from '../../context/userContext'
 
 const Product = ({
   onProductLike,
@@ -17,9 +20,11 @@ const Product = ({
   wight,
   description,
   _id,
-  currentUser,
   product,
 }) => {
+  const { user: currentUser } = useContext(UserContext)
+
+  const navigate = useNavigate()
   const discount_price = calcDiscountPrice(price, discount)
   const isLike = isLiked(likes, currentUser?._id)
 
@@ -31,6 +36,7 @@ const Product = ({
         <a
           href="#"
           className="button-back"
+          onClick={() => navigate(-1)}
         >
           Назад
         </a>

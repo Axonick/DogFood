@@ -1,4 +1,8 @@
 import cn from 'classnames'
+import { useContext } from 'react'
+import { Link } from 'react-router-dom'
+import { CardContext } from '../../context/cardContext'
+import { UserContext } from '../../context/userContext'
 import { calcDiscountPrice, isLiked } from '../../utils/product'
 
 import './index.css'
@@ -14,11 +18,11 @@ function Card({
   desciption,
   pictures,
   tags,
-  onProductLike,
-  currentUser,
 }) {
-  const discount_price = calcDiscountPrice(price, discount)
+  const { user: currentUser, isLoading } = useContext(UserContext)
+  const { handleLike: onProductLike } = useContext(CardContext)
 
+  const discount_price = calcDiscountPrice(price, discount)
   const liked = isLiked(likes, currentUser?._id)
 
   function handleLikeClick() {
@@ -52,8 +56,8 @@ function Card({
         </button>
       </div>
 
-      <a
-        href="/product"
+      <Link
+        to={`/product/${_id}`}
         className="card__link"
       >
         <img
@@ -73,7 +77,7 @@ function Card({
           <span className="card__wight">{wight}</span>
           <p className="card__name">{name}</p>
         </div>
-      </a>
+      </Link>
       <a
         href="#"
         className="card__cart btn btn_type_primary"

@@ -1,8 +1,6 @@
-import { useEffect, useState } from 'react'
-import CardList from '../CardList/CardList'
+import { useCallback, useEffect, useState } from 'react'
 import Footer from '../Footer/Footer'
 import Header from '../Header/Header'
-import Sort from '../Sort/Sort'
 import Logo from '../Logo/Logo'
 import Search from '../Search/Search'
 import SearchInfo from '../SearchInfo/SearchInfo'
@@ -10,23 +8,25 @@ import api from '../../utils/api'
 import './index.css'
 import useDebounce from '../../hooks/useDebounce'
 import { isLiked } from '../../utils/product'
-import Spinner from '../Spinner'
+import { CatalogPage } from '../../pages/CatalogPage/Catalog-page'
+import { ProductPage } from '../../pages/ProductPage/Product-Page'
+import { Route, Routes, useNavigate } from 'react-router-dom'
+import { NotFoundPage } from '../../pages/NotFound/Not-found-page'
+import { UserContext } from '../../context/userContext'
+import { CardContext } from '../../context/cardContext'
 
 function App() {
   const [cards, setCards] = useState([])
   const [searchQuery, setSearchQuery] = useState('')
   const [currentUser, setCurrentUser] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
+  const navigate = useNavigate()
   const debounceSearchQuery = useDebounce(searchQuery, 300)
 
-  const handleRequest = () => {
+  const handleRequest = useCallback(() => {
     setIsLoading(true)
-    //const filterCards = cards.filter((item) =>
-    //  item.name.toUpperCase().includes(searchQuery.toUpperCase())
-    //)
-    //setCards(filterCards)
     api
-      .search(debounceSearchQuery)
+      .search(searchQuery)
       .then((searchResult) => {
         setCards(searchResult)
       })
@@ -34,7 +34,7 @@ function App() {
       .finally(() => {
         setIsLoading(false)
       })
-  }
+  }, [searchQuery])
 
   useEffect(() => {
     setIsLoading(true)
@@ -53,8 +53,9 @@ function App() {
     handleRequest()
   }, [debounceSearchQuery])
 
-  const handleFormSubmit = (e) => {
-    e.preventDefault()
+  const handleFormSubmit = (inputText) => {
+    navigate('/')
+    setSearchQuery(inputText)
     handleRequest()
   }
 
@@ -68,55 +69,65 @@ function App() {
     })
   }
 
-  function handleProductLike(product) {
-    const liked = isLiked(product.likes, currentUser._id)
-    api.changeLikeProduct(product._id, liked).then((newCard) => {
-      const newProducts = cards.map((cardState) => {
-        //console.log('Карточка из стейта', cardState)
-        //console.log('Карточка из сервера', newCard)
-        return cardState._id === newCard._id ? newCard : cardState
+  const handleProductLike = useCallback(
+    (product) => {
+      const liked = isLiked(product.likes, currentUser._id)
+      return api.changeLikeProduct(product._id, liked).then((updateCard) => {
+        const newProducts = cards.map((cardState) => {
+          //console.log('Карточка из стейта', cardState)
+          //console.log('Карточка из сервера', updateCard)
+          return cardState._id === updateCard._id ? updateCard : cardState
+        })
+        setCards(newProducts)
+
+        return updateCard
       })
-      setCards(newProducts)
-    })
-  }
+    },
+    [currentUser, cards]
+  )
 
   return (
-    <>
-      <Header
-        user={currentUser}
-        onUpdateUser={handleUpdateUser}
-      >
-        <>
-          <Logo
-            className="logo logo_place_header"
-            href="/"
-          />
-          <Search
-            onSubmit={() => handleFormSubmit}
-            onInput={handleInputChange}
-          />
-        </>
-      </Header>
-      <main className="content container">
-        <SearchInfo
-          searchText={searchQuery}
-          searchCount={cards.length}
-        />
-        <Sort />
-        <div className="content__cards">
-          {isLoading ? (
-            <Spinner />
-          ) : (
-            <CardList
-              goods={cards}
-              onProductLike={handleProductLike}
-              currentUser={currentUser}
+    <UserContext.Provider value={{ user: currentUser, isLoading }}>
+      <CardContext.Provider value={{ cards, handleLike: handleProductLike }}>
+        <Header>
+          <>
+            <Logo
+              className="logo logo_place_header"
+              href="/"
             />
-          )}
-        </div>
-      </main>
-      <Footer />
-    </>
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  <Search
+                    onSubmit={handleFormSubmit}
+                    onInput={handleInputChange}
+                  />
+                }
+              />
+            </Routes>
+          </>
+        </Header>
+        <main className="content container">
+          <SearchInfo searchText={searchQuery} />
+          <Routes>
+            <Route
+              index
+              element={<CatalogPage />}
+            />
+            <Route
+              path="/product/:productId"
+              element={<ProductPage isLoading={isLoading} />}
+            />
+            <Route
+              path="*"
+              element={<NotFoundPage />}
+            />
+          </Routes>
+        </main>
+        <Footer />
+      </CardContext.Provider>
+    </UserContext.Provider>
   )
 }
 
