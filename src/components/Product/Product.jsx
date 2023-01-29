@@ -7,6 +7,11 @@ import quality from './img/quality.svg'
 import { useNavigate } from 'react-router-dom'
 import { useContext } from 'react'
 import { UserContext } from '../../context/userContext'
+import { ContentHeader } from '../ContentHeader/Content-header'
+import Rating from '../Rating/Rating'
+import { useState } from 'react'
+import { useMemo } from 'react'
+import { FormReview } from '../FormReview/Form-review'
 
 const Product = ({
   onProductLike,
@@ -21,30 +26,31 @@ const Product = ({
   description,
   _id,
   product,
+  setProduct,
 }) => {
   const { user: currentUser } = useContext(UserContext)
-
-  const navigate = useNavigate()
+  //const [rating, setRating] = useState(null)
+  //const navigate = useNavigate()
   const discount_price = calcDiscountPrice(price, discount)
   const isLike = isLiked(likes, currentUser?._id)
-
   const descriptionHTML = createMarkup(description)
+
+  const ratingCount = useMemo(
+    () =>
+      Math.round(
+        reviews.reduce((acc, r) => (acc = acc + r.rating), 0) / reviews.length
+      ),
+    [reviews]
+  )
 
   return (
     <>
-      <div>
-        <a
-          href="#"
-          className="button-back"
-          onClick={() => navigate(-1)}
-        >
-          Назад
-        </a>
-        <h1 className={style.productTitle}>{name}</h1>
+      <ContentHeader title={name}>
         <div>
-          <span>Артикул:</span> <b>2388907</b>
+          <span>Артикул:</span>
+          <Rating rating={ratingCount} /> {reviews.length} отзыв
         </div>
-      </div>
+      </ContentHeader>
       <div className={style.product}>
         <div className={style.imgWrapper}>
           <img
@@ -56,7 +62,7 @@ const Product = ({
           <span className={discount ? style.oldPrice : style.price}>
             {price}&nbsp;₽
           </span>
-          {discount && (
+          {discount !== 0 && (
             <span className={(cn(style.price), 'card__price_type_discount')}>
               {discount_price}&nbsp;₽
             </span>
@@ -139,6 +145,19 @@ const Product = ({
           </div>
         </div>
       </div>
+      <ul>
+        {reviews.map((reviewData) => (
+          <li key={reviewData._id}>
+            {reviewData.text} <Rating rating={reviewData.rating} />
+          </li>
+        ))}
+      </ul>
+
+      <FormReview
+        title={`Отзыв о товаре ${name}`}
+        productId={_id}
+        setProduct={setProduct}
+      />
     </>
   )
 }

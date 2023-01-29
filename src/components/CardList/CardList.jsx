@@ -1,19 +1,32 @@
 import { useContext } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { CardContext } from '../../context/cardContext'
+import { UserContext } from '../../context/userContext'
 import Card from '../Card/Card'
+import { NotFound } from '../NotFound/NotFound'
 import './index.css'
 
-function CardList() {
-  const { cards } = useContext(CardContext)
+function CardList({ cards }) {
+  const navigate = useNavigate()
+  const isLoading = useContext(UserContext)
   return (
-    <div className="cards">
-      {cards.map((item, index) => (
-        <Card
-          key={item._id}
-          {...item}
+    <>
+      {!cards.length && !isLoading && (
+        <NotFound
+          buttonText="Назад"
+          title="Простите по вашему запросу ничего не найдено"
+          buttonAction={() => navigate(-1)}
         />
-      ))}
-    </div>
+      )}
+      <div className="cards">
+        {cards.map((item, index) => (
+          <Card
+            key={item._id}
+            {...item}
+          />
+        ))}
+      </div>
+    </>
   )
 }
 

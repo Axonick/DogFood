@@ -1,6 +1,6 @@
 import notFound from './img/ic-notfound.svg'
 import { Link } from 'react-router-dom'
-import style from './styles.module.css'
+import style from './style.module.css'
 
 export const NotFound = ({
   children,

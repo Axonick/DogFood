@@ -1,14 +1,15 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { ReactComponent as SearchIcon } from './search.svg'
 import { ReactComponent as CloseIcon } from './close.svg'
 import './index.css'
 
 function Search({ onSubmit: propsOnSubmit, onInput }) {
   const [inputText, setInputText] = useState('')
+  const inputRef = useRef(null)
 
-  const handleInput = (e) => {
-    setInputText(e.target.value)
-    onInput && onInput(e.target.value)
+  const handleInput = () => {
+    setInputText(inputRef.current.value)
+    onInput && onInput(inputRef.current.value)
   }
 
   const handleFormSubmit = (e) => {
@@ -30,8 +31,8 @@ function Search({ onSubmit: propsOnSubmit, onInput }) {
     >
       <input
         type="text"
-        value={inputText}
         className="search__input"
+        ref={inputRef}
         placeholder="Поиск"
         onInput={handleInput}
       />

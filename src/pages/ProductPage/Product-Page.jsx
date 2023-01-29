@@ -10,37 +10,33 @@ import Sort from '../../components/Sort/Sort'
 import Spinner from '../../components/Spinner'
 import { CardContext } from '../../context/cardContext'
 import { UserContext } from '../../context/userContext'
+import { useApi } from '../../hooks/useApi'
 import api from '../../utils/api'
 import { isLiked } from '../../utils/product'
 
 //const ID_PRODUCT = '622c77e877d63f6e70967d22'
 
-export const ProductPage = ({ isLoading }) => {
+export const ProductPage = () => {
   const { productId } = useParams()
-  const [product, setProduct] = useState(null)
-  const [errorState, setErrorState] = useState(null)
-
   const { handleLike } = useContext(CardContext)
+
+  const handleGetProduct = useCallback(
+    () => api.getProductById(productId),
+    [productId]
+  )
+
+  const {
+    data: product,
+    setData: setProduct,
+    loading: isLoading,
+    error: errorState,
+  } = useApi(handleGetProduct)
 
   const handleProductLike = useCallback(() => {
     handleLike(product).then((updateProduct) => {
       setProduct(updateProduct)
     })
-  }, [product, handleLike])
-
-  useEffect(() => {
-    //setIsLoading(true)
-    api
-      .getProductById(productId)
-      .then((productsData) => {
-        //setCurrentUser(userData)
-        setProduct(productsData)
-      })
-      .catch((err) => setErrorState(err))
-    //.finally(() => {
-    //  setIsLoading(false)
-    //})
-  }, [])
+  }, [product, handleLike, setProduct])
 
   return (
     <>
